@@ -1,8 +1,0 @@
-{
-  "permissions": {
-    "allow": [
-      "PowerShell(Get-ChildItem -Recurse \"c:\\\\Users\\\\dedo0\\\\Desktop\\\\projects\\\\Portfolio\" | Where-Object {$_.Extension -match '\\\\.\\(jpg|jpeg|png|gif|webp|svg\\)$'} | Select-Object FullName, Length)",
-      "WebFetch(domain:api.cdnjs.com)"
-    ]
-  }
-}
