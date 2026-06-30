@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' https://cdnjs.cloudflare.com; style-src 'self' https://cdnjs.cloudflare.com; font-src https://cdnjs.cloudflare.com; img-src 'self' data:; connect-src 'none'; object-src 'none'; frame-ancestors 'none'; base-uri 'self'; form-action 'none'">
+    <meta name="referrer" content="strict-origin-when-cross-origin">
+    <meta http-equiv="Permissions-Policy" content="camera=(), microphone=(), geolocation=(), payment=(), usb=()">
+    <meta name="robots" content="index, follow">
+    <title>Abdulrahman Alnowaiser | Portfolio</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js" integrity="sha512-dLxUelApnYxpLt6K2iomGngnHO83iUvZytA3YjDUCjT0HDOHKXnVYdf3hU4JjM8uEhxf9nD1/ey98U3t2vZ0qQ==" crossorigin="anonymous" referrerpolicy="no-referrer" defer></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <nav>
+                <div class="logo">Abdulrahman :)</div>
+                <ul class="nav-links">
+                    <li><a href="#home">Home</a></li>
+                    <li><a href="#about">About</a></li>
+                    <li><a href="#experience">Experience</a></li>
+                    <li><a href="#education">Education</a></li>
+                    <li><a href="#projects">Projects</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                </ul>
+                <button class="mobile-menu-btn">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <div class="mobile-menu" id="mobile-menu">
+        <button class="mobile-menu-close">
+            <i class="fas fa-times"></i>
+        </button>
+        <ul class="mobile-nav-links">
+            <li><a href="#home">Home</a></li>
+            <li><a href="#about">About</a></li>
+            <li><a href="#experience">Experience</a></li>
+            <li><a href="#education">Education</a></li>
+            <li><a href="#projects">Projects</a></li>
+            <li><a href="#contact">Contact</a></li>
+        </ul>
+    </div>
+
+    <section id="home" class="hero">
+        <div class="container hero-container">
+            <div class="hero-content">
+                <h1>Hi, I'm Abdulrahman A. Alnowaiser</h1>
+                <h2>Computer Science Graduate</h2>
+                <p>Fresh Computer Science graduate (GPA 4.40/5.00, Second Honors) with hands-on experience in secure application development, Linux environments, networking, and cloud technologies.</p>
+                <a href="#projects" class="cta-button">View My Work</a>
+            </div>
+            <div class="three-d-container">
+                <canvas id="three-d-canvas"></canvas>
+                <div class="screen-glow" id="screen-glow"></div>
+                <div class="controls-hint">
+                    <i class="fas fa-mouse-pointer"></i>
+                    Drag to rotate • Scroll to zoom
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="about">
+        <div class="container">
+            <h2 class="section-title">About Me</h2>
+            <div class="about-content">
+                <div class="about-text">
+                    <p>I am a Computer Science graduate from the University of Jeddah with a GPA of 4.40/5.00 (Second Honors), with a focus on secure application development, cybersecurity practices, and cloud technologies.</p>
+                    <p>I gained practical experience at the National Center of Meteorology, where I worked on system hardening, endpoint configuration, software deployment, and network access control.</p>
+                    <p>I enjoy building real-world applications — from AI-powered medical tools to bilingual web platforms with role-based access management and Firebase security rules.</p>
+                </div>
+                <div class="skills">
+                    <h3 class="skills-title">Skills & Technologies</h3>
+                    <div class="skills-grid">
+                        <div class="skill-item">Python</div>
+                        <div class="skill-item">C/C++</div>
+                        <div class="skill-item">Java</div>
+                        <div class="skill-item">Flutter/Dart</div>
+                        <div class="skill-item">JavaScript</div>
+                        <div class="skill-item">SQL</div>
+                        <div class="skill-item">Assembly</div>
+                        <div class="skill-item">Linux</div>
+                        <div class="skill-item">Network Security</div>
+                        <div class="skill-item">Cloud Security</div>
+                        <div class="skill-item">Firebase</div>
+                        <div class="skill-item">Git</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="experience">
+        <div class="container">
+            <h2 class="section-title">Experience & Projects</h2>
+
+            <div class="experience-tabs-container">
+                <div class="tabs-list" role="tablist">
+                    <button class="tab-button active" data-tab="job1">NCM</button>
+                    <button class="tab-button" data-tab="job2">XRBone</button>
+                    <button class="tab-button" data-tab="job3">ServeMe</button>
+                </div>
+
+                <div class="tabs-content">
+
+                    <div id="job1" class="tab-panel active">
+                        <h3 class="job-title">Software Engineering & IT Intern <span class="job-company">@ National Center of Meteorology</span></h3>
+                        <span class="job-date">May 2025 – July 2025</span>
+                        <div class="job-description">
+                            <p>Collaborated on managing endpoint configuration, software deployment, and system hardening activities to maintain security compliance and operational integrity.</p>
+                            <p>Monitored network access activity, managed user permissions, and assisted in implementing secure access controls across organizational systems.</p>
+                        </div>
+                        <div class="phase-skills">
+                            <span class="phase-skill">System Hardening</span>
+                            <span class="phase-skill">Network Security</span>
+                            <span class="phase-skill">Access Control</span>
+                            <span class="phase-skill">Linux</span>
+                        </div>
+                    </div>
+
+                    <div id="job2" class="tab-panel">
+                        <h3 class="job-title">Full-Stack Desktop App Developer <span class="job-company">@ XRBone (AI Radiological Diagnosis)</span></h3>
+                        <span class="job-date">Aug 2025 – May 2026</span>
+                        <div class="job-description">
+                            <p>Developed a full-stack desktop application using Flutter, implementing secure local storage and data transmission pipelines to ensure medical data integrity.</p>
+                            <p>Embedded EfficientNet and YOLO models while maintaining secure API integrations and robust application logic.</p>
+                        </div>
+                        <div class="phase-skills">
+                            <span class="phase-skill">Flutter</span>
+                            <span class="phase-skill">Dart</span>
+                            <span class="phase-skill">EfficientNet</span>
+                            <span class="phase-skill">YOLO</span>
+                            <span class="phase-skill">Secure APIs</span>
+                        </div>
+                    </div>
+
+                    <div id="job3" class="tab-panel">
+                        <h3 class="job-title">Secure Web Developer <span class="job-company">@ ServeMe & UberEatsAffi</span></h3>
+                        <span class="job-date">Jan 2025 – Dec 2026</span>
+                        <div class="job-description">
+                            <p>Built a bilingual service-booking application featuring a role-based admin dashboard to enforce strict identity and access management (IAM) controls.</p>
+                            <p>Configured real-time Firebase Firestore database security rules to restrict unauthorized access and protect user data privacy.</p>
+                        </div>
+                        <div class="phase-skills">
+                            <span class="phase-skill">Firebase</span>
+                            <span class="phase-skill">Firestore</span>
+                            <span class="phase-skill">RBAC / IAM</span>
+                            <span class="phase-skill">JavaScript</span>
+                            <span class="phase-skill">HTML/CSS</span>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="education">
+        <div class="container">
+            <h2 class="section-title">Education & Certifications</h2>
+            <div class="edu-split">
+
+                <div class="edu-column">
+                    <h3 class="edu-column-title"><i class="fas fa-graduation-cap"></i> Education</h3>
+                    <div class="edu-degree-card">
+                        <div class="edu-degree-date">2021 – 2026</div>
+                        <h4>Bachelor of Science in Computer Science</h4>
+                        <p class="edu-school">University of Jeddah &mdash; Jeddah, Saudi Arabia</p>
+                        <div class="edu-gpa-badge">GPA 4.40 / 5.00 &mdash; Second Honors</div>
+                        <p class="edu-coursework"><strong>Relevant Coursework:</strong> Network Architectures, Cloud Computing, Assembly Language, Systems Programming</p>
+                    </div>
+                </div>
+
+                <div class="edu-column">
+                    <h3 class="edu-column-title"><i class="fas fa-certificate"></i> Certifications</h3>
+
+                    <div class="cert-card">
+                        <div class="cert-icon"><i class="fab fa-aws"></i></div>
+                        <div class="cert-info">
+                            <h4>Cloud Computing Services</h4>
+                            <p>Amazon Web Services (AWS)</p>
+                            <span class="cert-badge in-progress">In Progress &mdash; Expected 2026</span>
+                        </div>
+                    </div>
+
+                    <div class="cert-card">
+                        <div class="cert-icon"><i class="fas fa-users-cog"></i></div>
+                        <div class="cert-info">
+                            <h4>Agile Scrum Master</h4>
+                            <p>Simplilearn SkillUp</p>
+                            <span class="cert-badge certified">Certified &mdash; November 2025</span>
+                            <a href="Agile Scrum Master Certificate.pdf" class="cert-view-link" target="_blank" rel="noopener noreferrer"><i class="fas fa-file-pdf"></i> View Certificate</a>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <section id="projects">
+        <div class="container">
+            <h2 class="section-title">Projects</h2>
+            <div class="projects-masonry">
+
+                <div class="masonry-card" data-category="ai">
+                    <div class="masonry-card-image">
+                        <i class="fas fa-x-ray"></i>
+                    </div>
+                    <div class="masonry-card-content">
+                        <span class="project-category">AI & Healthcare</span>
+                        <h3>XRBone — AI Radiological Diagnosis</h3>
+                        <p>A full-stack desktop application for AI-powered radiological diagnosis with secure local storage and data transmission pipelines ensuring medical data integrity.</p>
+                        <div class="project-tech">
+                            <span class="tech-tag">Flutter</span>
+                            <span class="tech-tag">EfficientNet</span>
+                            <span class="tech-tag">YOLO</span>
+                            <span class="tech-tag">Dart</span>
+                        </div>
+                        <button class="expand-btn">
+                            <i class="fas fa-chevron-down"></i> Read More
+                        </button>
+                        <div class="expanded-content">
+                            <p><strong>Key Features:</strong></p>
+                            <ul>
+                                <li>EfficientNet & YOLO models for accurate bone diagnosis</li>
+                                <li>Secure local storage protecting sensitive medical data</li>
+                                <li>Secure API integrations and robust application logic</li>
+                                <li>Full-stack Flutter desktop app for cross-platform use</li>
+                            </ul>
+                            <div class="project-links">
+                                <a href="https://github.com/aalnowaiserr/XrBoneProject" class="project-link" target="_blank" rel="noopener noreferrer"><i class="fab fa-github"></i> Code</a>
+                                <a href="#" class="project-link"><i class="fas fa-external-link-alt"></i> Demo</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="masonry-card" data-category="web">
+                    <div class="masonry-card-image">
+                        <i class="fas fa-concierge-bell"></i>
+                    </div>
+                    <div class="masonry-card-content">
+                        <span class="project-category">Secure Web Development</span>
+                        <h3>ServeMe — Bilingual Service Booking</h3>
+                        <p>A bilingual (Arabic/English) service-booking platform with a role-based admin dashboard, strict IAM controls, and Firestore security rules to protect user data.</p>
+                        <div class="project-tech">
+                            <span class="tech-tag">Firebase</span>
+                            <span class="tech-tag">JavaScript</span>
+                            <span class="tech-tag">RBAC</span>
+                            <span class="tech-tag">Firestore</span>
+                        </div>
+                        <button class="expand-btn">
+                            <i class="fas fa-chevron-down"></i> Read More
+                        </button>
+                        <div class="expanded-content">
+                            <p><strong>Key Features:</strong></p>
+                            <ul>
+                                <li>Full bilingual (Arabic/English) support</li>
+                                <li>Role-based admin dashboard enforcing IAM controls</li>
+                                <li>Firestore rules restricting unauthorized data access</li>
+                                <li>Real-time sync with user data privacy protection</li>
+                            </ul>
+                            <div class="project-links">
+                                <a href="#" class="project-link"><i class="fab fa-github"></i> Code</a>
+                                <a href="#" class="project-link"><i class="fas fa-external-link-alt"></i> Demo</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="masonry-card" data-category="web">
+                    <div class="masonry-card-image">
+                        <i class="fas fa-utensils"></i>
+                    </div>
+                    <div class="masonry-card-content">
+                        <span class="project-category">Web Development</span>
+                        <h3>UberEatsAffi</h3>
+                        <p>A secure food delivery affiliate web platform with user authentication, Firebase access control rules, and a clean responsive UI.</p>
+                        <div class="project-tech">
+                            <span class="tech-tag">JavaScript</span>
+                            <span class="tech-tag">Firebase</span>
+                            <span class="tech-tag">HTML/CSS</span>
+                        </div>
+                        <button class="expand-btn">
+                            <i class="fas fa-chevron-down"></i> Read More
+                        </button>
+                        <div class="expanded-content">
+                            <p><strong>Key Features:</strong></p>
+                            <ul>
+                                <li>Secure user authentication and session management</li>
+                                <li>Firebase backend with granular access control rules</li>
+                                <li>Fully responsive and accessible UI</li>
+                            </ul>
+                            <div class="project-links">
+                                <a href="#" class="project-link"><i class="fab fa-github"></i> Code</a>
+                                <a href="#" class="project-link"><i class="fas fa-external-link-alt"></i> Demo</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <section id="contact">
+        <div class="container">
+            <h2 class="section-title">Get In Touch</h2>
+            <div class="contact-content">
+                <div class="contact-info">
+                    <div class="contact-item">
+                        <div class="contact-icon">
+                            <i class="fas fa-envelope"></i>
+                        </div>
+                        <div>
+                            <h3>Email</h3>
+                            <p><a id="email-link" class="contact-email-link" href="#">your@email.com</a></p>
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <div class="contact-icon">
+                            <i class="fas fa-map-marker-alt"></i>
+                        </div>
+                        <div>
+                            <h3>Location</h3>
+                            <p>Jeddah, Saudi Arabia</p>
+                        </div>
+                    </div>
+                    <div class="social-links">
+                        <a href="https://www.linkedin.com/in/abdulrahman-a-8105a628b/" class="social-link" target="_blank" rel="noopener noreferrer"><i class="fab fa-linkedin-in"></i></a>
+                        <a href="https://github.com/aalnowaiserr" class="social-link" target="_blank" rel="noopener noreferrer"><i class="fab fa-github"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2026 Abdulrahman A. Alnowaiser. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <script src="script.js" defer></script>
+</body>
+</html>
