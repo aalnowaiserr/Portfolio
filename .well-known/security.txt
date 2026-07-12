@@ -1,0 +1,10 @@
+# RFC 9116 — https://www.rfc-editor.org/rfc/rfc9116
+# A nice signal to have on a security engineer's own site: it tells a
+# researcher who finds an issue exactly where to send it.
+
+Contact: mailto:aalnowaiserr@gmail.com
+Preferred-Languages: en, ar
+
+# REQUIRED by RFC 9116, and it is a hard expiry — crawlers and scanners treat
+# an expired file as invalid. Set this under a year out and diarise renewing it.
+Expires: 2027-07-12T00:00:00.000Z

@@ -1,0 +1,20 @@
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editor / tooling
+.vscode/
+.idea/
+.claude/
+
+# Node (if you ever add a build step)
+node_modules/
+
+# Secrets — nothing here should ever be committed on a static site, but
+# a static site is exactly where a stray key does the most damage: every
+# file in this repo is served verbatim to the public internet.
+.env
+.env.*
+*.pem
+*.key

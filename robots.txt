@@ -1,0 +1,19 @@
+User-agent: *
+Allow: /
+
+# Cloudflare's internal endpoints — no crawl value.
+Disallow: /cdn-cgi/
+
+# NOTE ON THE PDFs (deliberately NOT Disallow'd):
+#
+# The PDFs are kept out of search results by the `X-Robots-Tag: noindex`
+# response header (set at the Cloudflare edge — see DEPLOY.md), NOT by a
+# Disallow rule here.
+#
+# This is intentional and the two are mutually exclusive. A `Disallow` stops
+# a crawler from FETCHING the file — which means it never sees the noindex
+# header, and Google may still list the bare URL if another page links to it.
+# Allowing the fetch is what lets the crawler read `noindex` and actually drop
+# the file from the index.
+#
+# Do not "tighten" this by adding `Disallow: /*.pdf$` — it would weaken it.
