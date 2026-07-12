@@ -1,19 +1,27 @@
 User-agent: *
 Allow: /
 
-# Cloudflare's internal endpoints — no crawl value.
-Disallow: /cdn-cgi/
+# Keep the PDFs (which carry personal contact details) out of search results.
+#
+# NOTE — this is a deliberate downgrade, not an oversight.
+#
+# The stronger control is `X-Robots-Tag: noindex`, served as a response header:
+# it lets a crawler fetch the file, read the header, and drop it from the index
+# entirely. A `Disallow` is weaker — it only blocks the *fetch*, so Google can
+# still list the bare URL if another site links to it.
+#
+# We use the weaker one because GitHub Pages cannot send custom response headers
+# at all. There is no `_headers`, no `.htaccess`, no config. `X-Robots-Tag` is
+# simply not achievable here, so `Disallow` is the only lever that exists.
+#
+# If this site ever moves behind Cloudflare or any host with header control:
+# delete these two lines and serve `X-Robots-Tag: noindex` instead. Do not do
+# both — a Disallow would stop the crawler ever seeing the noindex.
+Disallow: /AbdulrahmansCV.pdf
+Disallow: /agile-scrum-master-certificate.pdf
 
-# NOTE ON THE PDFs (deliberately NOT Disallow'd):
-#
-# The PDFs are kept out of search results by the `X-Robots-Tag: noindex`
-# response header (set at the Cloudflare edge — see DEPLOY.md), NOT by a
-# Disallow rule here.
-#
-# This is intentional and the two are mutually exclusive. A `Disallow` stops
-# a crawler from FETCHING the file — which means it never sees the noindex
-# header, and Google may still list the bare URL if another page links to it.
-# Allowing the fetch is what lets the crawler read `noindex` and actually drop
-# the file from the index.
-#
-# Do not "tighten" this by adding `Disallow: /*.pdf$` — it would weaken it.
+# This file only works when served from the ORIGIN ROOT
+# (https://aalnowaiserr.github.io/robots.txt). Crawlers do not read robots.txt
+# from a subdirectory, so it is inert on a project site served at
+# /Portfolio/. That is why the repo is named `aalnowaiserr.github.io` — a
+# user site is published at the root, where this file is actually honoured.

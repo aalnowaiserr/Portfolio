@@ -1,221 +1,149 @@
-# Deploying — GitHub Pages + custom domain + Cloudflare
+# Deploying — GitHub Pages (user site, no custom domain)
 
-Static site, no build step. Push to `main` and GitHub Pages redeploys.
+Static site, no build step. Push to `main`; Pages redeploys in ~1 minute.
 
----
-
-## ⚠️ The one thing you must not skip
-
-**GitHub Pages cannot serve custom response headers. At all.**
-
-No `_headers`, no `.htaccess`, no config file, no setting. Every response uses
-GitHub's fixed headers and there is no way to add to them. This is a harder limit
-than most static hosts — it is not a matter of finding the right config file,
-because there isn't one.
-
-What that means concretely:
-
-- The CSP in the `<meta>` tag in `index.html` **does** work. It covers `script-src`,
-  `style-src`, `font-src`, `img-src`, `object-src`, `base-uri`, `form-action`.
-- **`frame-ancestors`, `X-Frame-Options`, `Strict-Transport-Security`,
-  `Permissions-Policy`, COOP/CORP and `X-Robots-Tag` are header-only.** A
-  `<meta http-equiv>` cannot express any of them — browsers ignore the attempt.
-
-So: **GitHub Pages serves the files, Cloudflare enforces the security headers.**
-Until step 4 is done, the site is framable by any origin (clickjacking) and has
-no HSTS.
-
-> There is no `_headers` file in this repo, deliberately. That format is a
-> Netlify / Cloudflare Pages convention which GitHub Pages ignores, so it would
-> enforce nothing while looking like it did — the worst property a security
-> control can have. **This document is the single source of truth for the header
-> set.**
+Live at **https://aalnowaiserr.github.io/**
 
 ---
 
-## 1. Enable Pages
+## Setup
 
 **Settings → Pages**
 
 - Source: **Deploy from a branch**
 - Branch: **`main`**, folder **`/ (root)`**
+- Repo must be **public** (Pages from a private repo requires GitHub Pro).
 
-The repo must be **public** (Pages from a private repo needs GitHub Pro).
+### The repo name is load-bearing
 
-### Do not delete `.nojekyll`
+The repo must be named exactly **`aalnowaiserr.github.io`**. A repo with that
+name is published as a *user site* at the **origin root**. Any other name makes
+it a *project site* served from a subdirectory (`/Portfolio/`), and two things
+silently break there:
 
-That empty file at the repo root is load-bearing. Without it, Pages runs the
-content through Jekyll, which **silently drops every file and directory whose
-name starts with `.` or `_`** — including `.well-known/security.txt`, which would
-404 with no error anywhere. `.nojekyll` tells Pages to serve the tree verbatim.
+- **`robots.txt` is ignored.** Crawlers only ever read it from the origin root.
+  At `/Portfolio/robots.txt` it returns 200 and is read by nobody — which is
+  exactly why the breakage is easy to miss.
+- **`.well-known/security.txt` is not at its RFC location**, which is also the
+  origin root.
 
-## 2. Custom domain
+Both files are only real at the root. Don't rename the repo back.
 
-**Settings → Pages → Custom domain** → enter the domain → Save.
+### Don't delete `.nojekyll`
 
-GitHub writes a `CNAME` file to the repo root for you. Don't hand-write it; let
-GitHub create it, then `git pull` so your local copy matches.
-
-## 3. DNS + certificate  ← read the gotcha
-
-In Cloudflare DNS, for an apex domain (`example.com`):
-
-| Type | Name | Target | Proxy |
-|---|---|---|---|
-| CNAME | `@` | `aalnowaiserr.github.io` | see below |
-
-(Cloudflare's CNAME flattening makes an apex CNAME legal. For a `www` subdomain,
-use `www` as the name instead.)
-
-> ### The gotcha that wastes everyone an afternoon
->
-> **Set the record to DNS-only (grey cloud) FIRST.**
->
-> GitHub provisions the site's Let's Encrypt certificate over an HTTP-01
-> challenge against your domain. If Cloudflare's proxy (orange cloud) is already
-> in front, GitHub cannot complete that challenge, certificate issuance fails,
-> and **"Enforce HTTPS" stays greyed out in Settings → Pages** with no useful
-> explanation.
->
-> Order of operations:
-> 1. Grey cloud (DNS only).
-> 2. Wait for Settings → Pages to report the certificate is provisioned
->    (minutes to ~an hour), then tick **Enforce HTTPS**.
-> 3. **Only then** switch the record to orange cloud (Proxied).
-
-Then under Cloudflare **SSL/TLS**:
-
-- Encryption mode: **Full (strict)** — GitHub Pages presents a valid public cert
-  once step 2 above has completed, so strict works. Do not use Flexible: it makes
-  Cloudflare talk plain HTTP to the origin and can cause redirect loops.
-- **Always Use HTTPS**: on
-- **Minimum TLS Version**: 1.2
-
-## 4. Add the security headers (Transform Rule)
-
-This is the step that actually hardens the site.
-
-**Rules → Transform Rules → Modify Response Header → Create rule.**
-
-Name it `Security headers`, filter **All incoming requests**, and add each of the
-following as a **Set static** header:
-
-| Header | Value |
-|---|---|
-| `Content-Security-Policy` | `default-src 'none'; script-src 'self'; style-src 'self'; font-src 'self'; img-src 'self' data:; connect-src 'none'; object-src 'none'; frame-ancestors 'none'; base-uri 'self'; form-action 'none'; upgrade-insecure-requests` |
-| `X-Frame-Options` | `DENY` |
-| `X-Content-Type-Options` | `nosniff` |
-| `X-XSS-Protection` | `0` |
-| `Referrer-Policy` | `strict-origin-when-cross-origin` |
-| `Permissions-Policy` | `accelerometer=(), autoplay=(), camera=(), display-capture=(), encrypted-media=(), fullscreen=(), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), midi=(), payment=(), usb=(), xr-spatial-tracking=(), interest-cohort=()` |
-| `Cross-Origin-Opener-Policy` | `same-origin` |
-| `Cross-Origin-Resource-Policy` | `same-origin` |
-
-`X-XSS-Protection: 0` is correct, not a typo. The legacy XSS auditor it enables is
-itself exploitable and has been removed from modern browsers; `1; mode=block` is
-actively discouraged. The CSP is the real defence.
-
-Do **not** add `Cross-Origin-Embedder-Policy: require-corp`. It buys nothing here
-(no SharedArrayBuffer, no cross-origin subresources) and will break the first
-third-party image or script you ever add.
-
-### HSTS
-
-Don't set `Strict-Transport-Security` by hand — Cloudflare has a dedicated toggle
-that handles the edge cases:
-
-**SSL/TLS → Edge Certificates → HTTP Strict Transport Security (HSTS) → Enable**
-
-- Max-Age: **12 months**
-- Include subdomains: **on**
-- Preload: leave **off** until you are certain *every* subdomain will be
-  HTTPS-only forever. Preloading is compiled into browser binaries and is
-  genuinely painful to reverse.
-
-### PDF handling
-
-Second Transform Rule, `PDF privacy`. Filter (Edit expression):
-
-```
-ends_with(http.request.uri.path, ".pdf")
-```
-
-Set static headers:
-
-| Header | Value |
-|---|---|
-| `X-Robots-Tag` | `noindex, noimageindex, noarchive, nosnippet` |
-| `Content-Disposition` | `attachment` |
-
-`Content-Disposition: attachment` is what actually forces the résumé to download
-instead of rendering in the browser's PDF viewer. The HTML `download` attribute on
-the links is a hint only; this header is the enforcement.
-
-`robots.txt` deliberately does **not** `Disallow` the PDFs. Blocking the crawl
-would stop Google from ever *seeing* the `noindex` header, and it could still list
-the bare URL. Letting it crawl and read `noindex` is what de-indexes the file.
-
-### Font caching (optional, performance only)
-
-Third rule, `Font caching`. Filter:
-
-```
-starts_with(http.request.uri.path, "/fonts/")
-```
-
-Set `Cache-Control` to `public, max-age=31536000, immutable`. Font filenames only
-change when the font changes, so they can be cached hard. Nothing breaks if you
-skip this.
-
-## 5. Verify on the wire
-
-Don't trust the dashboards — a misconfigured proxy fails silently. After DNS
-propagates:
-
-```sh
-curl -sSI https://YOUR-DOMAIN/ | grep -iE 'content-security|x-frame|strict-transport|referrer|permissions|x-content|cross-origin'
-
-# Should show: content-disposition: attachment  AND  x-robots-tag: noindex
-curl -sSI https://YOUR-DOMAIN/AbdulrahmansCV.pdf | grep -iE 'content-disposition|x-robots'
-
-# Should be 200, not 404 — proves .nojekyll did its job
-curl -sS -o /dev/null -w '%{http_code}\n' https://YOUR-DOMAIN/.well-known/security.txt
-```
-
-Then run <https://securityheaders.com> against the domain — expect **A/A+**.
-
-If the headers are missing, the DNS record is almost certainly still grey-cloud
-(DNS-only) from step 3 and you never switched it back to orange.
+That empty file at the repo root is load-bearing too. Without it, Pages runs the
+tree through Jekyll, which **silently drops every file and directory whose name
+starts with `.` or `_`** — including `.well-known/security.txt`, which would 404
+with no error surfaced anywhere. `.nojekyll` makes Pages serve the tree verbatim.
 
 ---
 
-## ⚠️ Known, unfixable exposure: the CV in a public repo
+## ⚠️ The security ceiling — read this
 
-GitHub Pages serves directly from the repo, and Pages on the Free plan requires
-that repo to be **public**. So `AbdulrahmansCV.pdf` necessarily lives in a public
-git tree, and it is reachable at URLs that **are not your domain** and therefore
-**do not pass through Cloudflare**:
+**GitHub Pages cannot serve custom response headers. At all.** No `_headers`, no
+`.htaccess`, no config file, no setting. There is no workaround, and no
+`_headers` file in this repo, deliberately — on a host that ignores it, such a
+file enforces nothing while looking like it does, which is the worst property a
+security control can have.
 
-- `https://github.com/aalnowaiserr/Portfolio/blob/main/AbdulrahmansCV.pdf`
-- `https://raw.githubusercontent.com/aalnowaiserr/Portfolio/main/AbdulrahmansCV.pdf`
+With no custom domain there is also no Cloudflare (or any other proxy) in front,
+so **there is nowhere left to inject headers.** This is the ceiling. What you get:
 
-The Transform Rules in step 4 **do not apply to those URLs.** GitHub's `robots.txt`
-blocks `/*/raw/` but not `/blob/`, and `raw.githubusercontent.com` serves no
-`robots.txt` at all and sends no `X-Robots-Tag`. There is no header you can set to
-close this — it is a direct consequence of a public repo.
+### What IS protected
 
-It is also permanent: the PDF is in the commit history, so deleting the file later
-does **not** remove it from a public repo's history.
+| Control | How | Status |
+|---|---|---|
+| `Content-Security-Policy` | `<meta>` tag in `index.html` | ✅ Active — `default-src 'none'`, everything `'self'` |
+| Script / style / font / img sources | via that CSP | ✅ No third-party origin is trusted at all |
+| `Referrer-Policy` | `<meta name="referrer">` | ✅ Active |
+| HTTPS + HSTS | `github.io` is on the browser HSTS **preload list** | ✅ Free, and enforced by the browser itself |
+| Mixed content | `upgrade-insecure-requests` in the CSP | ✅ |
+| Framing (partial) | frame-busting script in `theme.js` | ⚠️ Weak — see below |
+| PDFs out of search | `Disallow` in `robots.txt` | ⚠️ Weak — see below |
+| PDF downloads | `download` attribute on the links | ✅ Works (same-origin) |
 
-If the CV contains a personal phone number or home address, you have three real
-options:
+### What CANNOT be protected, and why
 
-1. **Redact it.** Strip the sensitive fields, re-export, and accept that the site
-   version is public. Simplest and usually right.
-2. **Keep the CV out of the repo.** Remove the PDF, and point the "Résumé" buttons
-   at an external share link you can revoke. Nothing personal ever enters the
-   public tree.
-3. **GitHub Pro (~$4/mo).** Pages from a private repo, so `raw.githubusercontent`
-   and the blob view both 404 and your domain becomes the only path to the file.
+| Missing | Why it's impossible here |
+|---|---|
+| `frame-ancestors` | Ignored in `<meta>`; header-only. |
+| `X-Frame-Options` | Header-only. |
+| `X-Content-Type-Options: nosniff` | Header-only. **MIME sniffing is possible.** |
+| `Permissions-Policy` | Header-only — has no valid `<meta http-equiv>` form at all. |
+| `Cross-Origin-Opener-Policy` / `CORP` | Header-only. |
+| `X-Robots-Tag: noindex` on the PDFs | Header-only. |
+| `Content-Disposition: attachment` | Header-only. |
 
-Doing nothing is a valid choice — but make it a choice, not an oversight.
+Every one of these needs a host or proxy that can send headers. **If you ever
+want them, the fix is a custom domain proxied through Cloudflare** — that single
+change unlocks the entire list. Nothing else will.
+
+### On the frame-busting script
+
+`theme.js` busts out of iframes as a stand-in for `frame-ancestors`. It is
+genuinely weaker than the header: an attacker can use a `sandbox`ed iframe to
+block the bust-out, and it does nothing with JS disabled. It hides the document
+as a fallback.
+
+That's an acceptable trade here specifically because this is a static portfolio:
+there is no login and no state-changing action, so there is no click worth
+hijacking. The realistic risk is someone framing the site to pass it off as
+theirs, and this raises the cost of that. It is not equivalent to the header.
+
+### On `robots.txt` vs the PDFs
+
+`robots.txt` now `Disallow`s the PDFs. This is a **deliberate downgrade**: the
+stronger control is `X-Robots-Tag: noindex` (which lets a crawler fetch the file,
+read the header, and drop it from the index), but that is a header and therefore
+impossible here. `Disallow` only blocks the fetch, so Google may still list the
+bare URL if someone links to it.
+
+If this site ever moves behind a proxy: remove the `Disallow` lines and serve
+`X-Robots-Tag: noindex` instead. **Never do both** — a `Disallow` prevents the
+crawler from ever seeing the `noindex`.
+
+---
+
+## ⚠️ The CV is public and permanent
+
+Pages requires a public repo, so `AbdulrahmansCV.pdf` lives in a public git tree
+and is served from URLs you cannot put any policy in front of:
+
+- `https://github.com/aalnowaiserr/<repo>/blob/main/AbdulrahmansCV.pdf`
+- `https://raw.githubusercontent.com/aalnowaiserr/<repo>/main/AbdulrahmansCV.pdf`
+
+`robots.txt` on your Pages site does not govern those hosts. GitHub's own
+`robots.txt` blocks `/*/raw/` but **not** `/blob/`, and `raw.githubusercontent.com`
+serves **no robots.txt at all** and sends no `X-Robots-Tag`.
+
+It is also **permanent**: the PDF is in the commit history, so deleting the file
+later does not remove it from a public repo's history.
+
+If the CV carries a personal phone number or home address, the only real fixes:
+
+1. **Redact and re-export it**, and rewrite history (`git filter-repo`) to purge
+   the old copy. Simplest and usually right.
+2. **Remove the PDF from the repo** and point the Résumé buttons at an external
+   share link you can revoke.
+
+Doing nothing is a legitimate choice — but make it a choice, not an oversight.
+
+---
+
+## Verify
+
+```sh
+# Should be 200 — proves the repo name gives you a root-served user site
+curl -sS -o /dev/null -w '%{http_code}\n' https://aalnowaiserr.github.io/robots.txt
+
+# Should be 200 — proves .nojekyll did its job
+curl -sS -o /dev/null -w '%{http_code}\n' https://aalnowaiserr.github.io/.well-known/security.txt
+
+# HSTS should be present (from the github.io preload); the rest will be absent,
+# and that is expected and unavoidable without a proxy.
+curl -sSI https://aalnowaiserr.github.io/ | grep -iE 'strict-transport|content-security|x-frame'
+```
+
+Running this through <https://securityheaders.com> will **not** score well, and
+that is not a misconfiguration — it is the documented ceiling of GitHub Pages
+without a proxy. The `<meta>` CSP it cannot see is doing the substantive work.
